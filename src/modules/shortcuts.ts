@@ -11,7 +11,6 @@ interface KeyboardKeys {
 }
 export default class Shortcuts {
 	hotkeys: KeyboardKeys;
-	keywait: boolean;
 	constructor() {
 		this.hotkeys = {
 			keymode: 'CmdOrCtrl+.',
@@ -21,7 +20,6 @@ export default class Shortcuts {
 			delete: '',
 			transparent: 'CmdOrCtrl+T',
 		}
-		this.keywait = false;
 	}
 
 	public init(win: BrowserWindow) {
