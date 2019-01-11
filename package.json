@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/mrjackphil/electron-hotkeys-app.git",
   "keywords": [
     "Electron",
     "quick",
@@ -14,12 +14,14 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
+  "author": "MrJackphil",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^4.0.1"
   },
   "dependencies": {
-    "active-window": "^0.1.0"
+    "@types/mousetrap": "^1.6.0",
+    "active-window": "^0.1.0",
+    "mousetrap": "^1.6.2"
   }
 }
