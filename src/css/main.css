@@ -1,3 +1,22 @@
-body {
+/* body {
 	-webkit-app-region: drag;
+} */
+
+.row {
+	display: flex;
+	width: 100%;
+}
+
+input {
+	flex: 1;
+	padding: .2rem;
+	border: 1px hsl(37, 56%, 21%) solid;
+	background: none;
+	border-radius: 5px;
+	margin: .4rem 1rem;
+}
+button {
+	border: none;
+	background: hsl(0, 0%, 96%);
+	color: hsl(37, 56%, 21%);
 }

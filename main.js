@@ -1,12 +1,17 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var electron_1 = require("electron");
+var shortcuts_1 = __importDefault(require("./src/modules/shortcuts"));
 // Modules to control application life and create native browser window
 var electron = require("electron");
-var _a = require("electron"), app = _a.app, BrowserWindow = _a.BrowserWindow;
+var _a = require("electron"), app = _a.app, BrowserWindow = _a.BrowserWindow, globalShortcut = _a.globalShortcut;
 var state = {
     height: 300,
     width: 700,
-    offsetx: 150
+    offsetx: 150,
 };
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -20,7 +25,8 @@ function createWindow(w, h, x, y) {
         y: y,
         movable: false,
         resizable: false,
-        alwaysOnTop: true
+        alwaysOnTop: true,
+        frame: false,
     });
     // and load the index.html of the app.
     mainWindow.loadURL("file://" + __dirname + "/index.html");
@@ -33,14 +39,38 @@ function createWindow(w, h, x, y) {
         // when you should delete the corresponding element.
         mainWindow = null;
     });
+    return mainWindow;
 }
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", function () {
     var width = electron.screen.getPrimaryDisplay().bounds.width;
-    createWindow(state.width, state.height, width - state.width - state.offsetx, 0);
     app.setAppUserModelId(process.execPath); // Fix for Win10 notifications
+    var win = createWindow(state.width, state.height, width - state.width - state.offsetx, 0);
+    //   win.webContents.openDevTools();
+    var shortcuts = new shortcuts_1.default;
+    shortcuts.init(win);
+    electron_1.ipcMain.on('toggle-opacity', function () {
+        var op = win.getOpacity() === 1 ? .2 : 1;
+        win.setOpacity(op);
+    });
+    electron_1.ipcMain.on('min', function () {
+        win.setBounds({
+            width: state.width,
+            height: state.height / 3,
+            x: width - state.width - state.offsetx,
+            y: 0,
+        });
+    });
+    electron_1.ipcMain.on('max', function () {
+        win.setBounds({
+            width: state.width,
+            height: state.height,
+            x: width - state.width - state.offsetx,
+            y: 0,
+        });
+    });
 });
 // Quit when all windows are closed.
 app.on("window-all-closed", function () {
