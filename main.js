@@ -51,6 +51,7 @@ app.on("ready", function () {
     //   win.webContents.openDevTools();
     var shortcuts = new shortcuts_1.default;
     shortcuts.init(win);
+    win.setSkipTaskbar(true);
     electron_1.ipcMain.on('toggle-opacity', function () {
         var op = win.getOpacity() === 1 ? .2 : 1;
         win.setOpacity(op);

@@ -64,6 +64,7 @@ app.on("ready", () => {
 
   const shortcuts = new Shortcuts;
   shortcuts.init(win);
+  win.setSkipTaskbar(true);
 
   ipcMain.on('toggle-opacity', () => {
 	const op = win.getOpacity() === 1 ? .2 : 1;
