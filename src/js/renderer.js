@@ -39,4 +39,3 @@ var callback = function (window) {
 action ? action.addEventListener('click', function () { return cInput(htk); }) : alert('action button not found');
 btn ? btn.addEventListener('click', function () { return window.close(); }) : alert('close button not found');
 monitor.getActiveWindow(callback, -1, 1);
-//# sourceMappingURL=renderer.js.map
