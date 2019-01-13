@@ -1,8 +1,8 @@
 const monitor = require('active-window');
 import { cInput } from '../modules/dom';
 import { ipcRenderer } from 'electron';
-import { ipcRModule, REv } from '../entities/ipcs';
-import IShortcuts from '../entities/shortcuts';
+import { REv, ipcRModule } from '../entities/ipcs';
+import IShortcuts from '../entities/shotcuts';
 import IHotkeyManager from '../entities/hotkeymanager';
 
 const btn = document.querySelector('.close');
@@ -47,10 +47,11 @@ class HotkeyManager implements IHotkeyManager{
 
 	public initEvents() {
 		try {
-			ipcRenderer.on(REv.initShortcuts, (s: IShortcuts) => s.localShortcuts() );
+			ipcRenderer.on(REv.initShortcuts, (ev: Event, s: IShortcuts) => {console.log(s);})
 			ipcRenderer.on(REv.newHotkey, () => {
 				htk ? htk.appendChild(cInput()) : alert('there is not hotkeys class');
 			});
+			ipcRenderer.send('window-shortcuts');
 			return true;
 		} catch(err) {
 			alert(err);

@@ -1,6 +1,6 @@
 import E, { ipcMain } from "electron";
-import Shortcuts from './src/modules/shortcuts';
-import { ipcRModule, BrowserWindowModule, REv } from "./src/entities/ipcs";
+import Shortcuts from './src/modules/shortcuts-global';
+import { REv } from "./src/entities/ipcs";
 
 // Modules to control application life and create native browser window
 const electron = require("electron");
@@ -59,30 +59,32 @@ app.on("ready", () => {
     state.height,
     width - state.width - state.offsetx,
     0
-  ) as BrowserWindowModule;
+  );
 
-//   win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   const shortcuts = new Shortcuts;
   shortcuts.init(win);
-  win.emit(REv.initShortcuts, shortcuts);
 
   win.setSkipTaskbar(true);
-  win.setIgnoreMouseEvents(true);
+  // win.setIgnoreMouseEvents(true);
 
+  ipcMain.on('window-shortcuts', () => {
+    win.webContents.send(REv.initShortcuts, shortcuts);
+  });
 
   ipcMain.on('toggle-opacity', () => {
-	const op = win.getOpacity() === 1 ? .2 : 1;
-	win.setOpacity(op);
+    const op = win.getOpacity() === 1 ? .2 : 1;
+    win.setOpacity(op);
   });
 
   ipcMain.on('min', () => {
-	win.setBounds({
-		width: state.width,
-		height: state.height / 3,
-		x: width - state.width - state.offsetx,
-		y: 0,
-	});
+    win.setBounds({
+      width: state.width,
+      height: state.height / 3,
+      x: width - state.width - state.offsetx,
+      y: 0,
+    });
   });
 
   ipcMain.on('max', () => {

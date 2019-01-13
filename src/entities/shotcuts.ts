@@ -4,16 +4,14 @@ export interface KeyboardKeys {
 	keymode: string,
 	hide: string,
 	focus: string,
-	newHotkey: string,
 	delete: string,
 	transparent: string
+	newHotkey: string,
 }
 
-export default class Shortcuts {
+export default class IShortcuts {
     hotkeys: KeyboardKeys = this.hotkeys;
     init: (win: BrowserWindow) => void = this.init;
-    registerGlobal: (win: BrowserWindow) => void = this.registerGlobal;
-    unregisterGlobal: (win: BrowserWindow) => void = this.unregisterGlobal;
-    localShortcuts: () => void = this.localShortcuts;
-
+    register: (win: BrowserWindow) => void = this.register;
+    unregister: (win: BrowserWindow) => void = this.unregister;
 }

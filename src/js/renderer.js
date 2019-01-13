@@ -44,10 +44,11 @@ var HotkeyManager = /** @class */ (function () {
     };
     HotkeyManager.prototype.initEvents = function () {
         try {
-            electron_1.ipcRenderer.on(ipcs_1.REv.initShortcuts, function (s) { return s.localShortcuts(); });
+            electron_1.ipcRenderer.on(ipcs_1.REv.initShortcuts, function (ev, s) { console.log(s); });
             electron_1.ipcRenderer.on(ipcs_1.REv.newHotkey, function () {
                 htk ? htk.appendChild(dom_1.cInput()) : alert('there is not hotkeys class');
             });
+            electron_1.ipcRenderer.send('window-shortcuts');
             return true;
         }
         catch (err) {

@@ -10,6 +10,6 @@ export interface ipcRModule {
 	on: (event: REv, ...args: any[]) => void;
 }
 
-export class BrowserWindowModule extends BrowserWindow{
-	emit: (event: REv, ...args: any[]) => boolean = this.emit;
+export interface BrowserWindowModule {
+	emit: (event: REv, ...args: any[]) => boolean;
 }

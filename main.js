@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var electron_1 = require("electron");
-var shortcuts_1 = __importDefault(require("./src/modules/shortcuts"));
+var shortcuts_global_1 = __importDefault(require("./src/modules/shortcuts-global"));
 var ipcs_1 = require("./src/entities/ipcs");
 // Modules to control application life and create native browser window
 var electron = require("electron");
@@ -49,12 +49,14 @@ app.on("ready", function () {
     var width = electron.screen.getPrimaryDisplay().bounds.width;
     app.setAppUserModelId(process.execPath); // Fix for Win10 notifications
     var win = createWindow(state.width, state.height, width - state.width - state.offsetx, 0);
-    //   win.webContents.openDevTools();
-    var shortcuts = new shortcuts_1.default;
+    win.webContents.openDevTools();
+    var shortcuts = new shortcuts_global_1.default;
     shortcuts.init(win);
-    win.emit(ipcs_1.REv.initShortcuts, shortcuts);
     win.setSkipTaskbar(true);
-    win.setIgnoreMouseEvents(true);
+    // win.setIgnoreMouseEvents(true);
+    electron_1.ipcMain.on('window-shortcuts', function () {
+        win.webContents.send(ipcs_1.REv.initShortcuts, shortcuts);
+    });
     electron_1.ipcMain.on('toggle-opacity', function () {
         var op = win.getOpacity() === 1 ? .2 : 1;
         win.setOpacity(op);
