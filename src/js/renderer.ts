@@ -1,13 +1,9 @@
-// This file is required by the index.html file and will
-// be executed in the renderer process for that window.
-// All of the Node.js APIs are available in this process.
-
-const {app} = require('electron');
-const {clipboard} = require('electron');
 const monitor = require('active-window');
-import { chChilds, cInput } from '../modules/dom';
+import { cInput } from '../modules/dom';
 import { ipcRenderer } from 'electron';
-import Shortcuts from '../modules/shortcuts';
+import { ipcRModule, REv } from '../entities/ipcs';
+import IShortcuts from '../entities/shortcuts';
+import IHotkeyManager from '../entities/hotkeymanager';
 
 const btn = document.querySelector('.close');
 const info = document.querySelector('.info');
@@ -16,26 +12,64 @@ const max = document.querySelector('.max');
 const action = document.querySelector('.action');
 const htk = document.querySelector('.hotkeys') as HTMLElement;
 
+ipcRenderer as ipcRModule;
 
-const callback = function(window: {app?: string, title?: string}){
-	try {
-		if (String(window.title) !== 'Hotkeys manager') {
-			if (info) { info.innerHTML = String(window.title); }
+class HotkeyManager implements IHotkeyManager{
+	constructor() {
+		this.init();
+	}
+
+	public init() {
+		try {
+			this.initEvents();
+			this.initButtons();
+			this.windowWatcher();
+			return true;
+		} catch(err) {
+			alert(err);
+			return false;
 		}
-	}catch(err) {
-		alert(err);
+	}
+
+	private windowWatcher() {
+		monitor.getActiveWindow(this.titleWatcherCallback, -1, 1);
+	}
+
+	private titleWatcherCallback(window: {app?: string, title?: string}) {
+		try {
+			if (String(window.title) !== 'Hotkeys manager') {
+				if (info) { info.innerHTML = String(window.title); }
+			}
+		} catch(err) {
+			alert(err);
+		}
+	}
+
+	public initEvents() {
+		try {
+			ipcRenderer.on(REv.initShortcuts, (s: IShortcuts) => s.localShortcuts() );
+			ipcRenderer.on(REv.newHotkey, () => {
+				htk ? htk.appendChild(cInput()) : alert('there is not hotkeys class');
+			});
+			return true;
+		} catch(err) {
+			alert(err);
+			return false;
+		}
+	}
+
+	public initButtons() {
+		try {
+			action ? action.addEventListener('click', () => ipcRenderer.emit(REv.newHotkey)) : alert('action button not found');
+			btn ? btn.addEventListener('click', () => window.close()) : alert('close button not found');
+			min ? min.addEventListener('click', () => ipcRenderer.send('min')) : alert('minimize button not found');
+			max ? max.addEventListener('click', () => ipcRenderer.send('max')) : alert('maximize button not found');
+			return true;
+		} catch(err) {
+			alert(err);
+			return false;
+		}
 	}
 }
 
-Shortcuts.localShortcuts();
-
-action && htk ? action.addEventListener('click', () => chChilds([htk], cInput()[0])) : alert('action button not found');
-btn ? btn.addEventListener('click', () => window.close()) : alert('close button not found');
-min ? min.addEventListener('click', () => ipcRenderer.send('min')) : alert('minimize button not found');
-max ? max.addEventListener('click', () => ipcRenderer.send('max')) : alert('maximize button not found');
-
-monitor.getActiveWindow(callback, -1, 1);
-
-ipcRenderer.on('newHotkey', (ev: Event, arg: string) => {
-	htk ? chChilds( [htk], cInput()[0] ) : alert('there is not hotkeys class');
-});
+const hotkeyManager = new HotkeyManager;

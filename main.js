@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var electron_1 = require("electron");
 var shortcuts_1 = __importDefault(require("./src/modules/shortcuts"));
+var ipcs_1 = require("./src/entities/ipcs");
 // Modules to control application life and create native browser window
 var electron = require("electron");
 var _a = require("electron"), app = _a.app, BrowserWindow = _a.BrowserWindow, globalShortcut = _a.globalShortcut;
@@ -51,7 +52,9 @@ app.on("ready", function () {
     //   win.webContents.openDevTools();
     var shortcuts = new shortcuts_1.default;
     shortcuts.init(win);
+    win.emit(ipcs_1.REv.initShortcuts, shortcuts);
     win.setSkipTaskbar(true);
+    win.setIgnoreMouseEvents(true);
     electron_1.ipcMain.on('toggle-opacity', function () {
         var op = win.getOpacity() === 1 ? .2 : 1;
         win.setOpacity(op);

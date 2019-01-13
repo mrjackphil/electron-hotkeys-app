@@ -15,7 +15,6 @@ var Shortcuts = /** @class */ (function () {
             delete: '',
             transparent: 'CmdOrCtrl+T',
         };
-        this.keywait = false;
     }
     Shortcuts.prototype.init = function (win) {
         var _this = this;
@@ -43,9 +42,11 @@ var Shortcuts = /** @class */ (function () {
         electron_1.globalShortcut.unregister(newHotkey);
         electron_1.globalShortcut.unregister(transparent);
     };
-    Shortcuts.localShortcuts = function () {
-        mousetrap_1.default.bind('ctrl+t', function () { electron_1.ipcRenderer.send('toggle-opacity'); });
-        mousetrap_1.default.bind('ctrl+x', function () { electron_1.ipcRenderer.emit('newHotkey'); });
+    Shortcuts.prototype.localShortcuts = function () {
+        var _a = this.hotkeys, transparent = _a.transparent, newHotkey = _a.newHotkey;
+        function mt(key) { return key.replace('CmdOrCtrl', 'ctrl'); }
+        mousetrap_1.default.bind(mt(transparent), function () { electron_1.ipcRenderer.send('toggle-opacity'); });
+        mousetrap_1.default.bind(mt(newHotkey), function () { electron_1.ipcRenderer.emit('newHotkey'); });
     };
     return Shortcuts;
 }());

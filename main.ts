@@ -1,5 +1,6 @@
 import E, { ipcMain } from "electron";
 import Shortcuts from './src/modules/shortcuts';
+import { ipcRModule, BrowserWindowModule, REv } from "./src/entities/ipcs";
 
 // Modules to control application life and create native browser window
 const electron = require("electron");
@@ -58,13 +59,17 @@ app.on("ready", () => {
     state.height,
     width - state.width - state.offsetx,
     0
-  );
+  ) as BrowserWindowModule;
 
 //   win.webContents.openDevTools();
 
   const shortcuts = new Shortcuts;
   shortcuts.init(win);
+  win.emit(REv.initShortcuts, shortcuts);
+
   win.setSkipTaskbar(true);
+  win.setIgnoreMouseEvents(true);
+
 
   ipcMain.on('toggle-opacity', () => {
 	const op = win.getOpacity() === 1 ? .2 : 1;

@@ -1,15 +1,8 @@
 import { globalShortcut, BrowserWindow, ipcMain, ipcRenderer } from "electron";
 import Mousetrap from 'mousetrap';
+import IShortcuts, {KeyboardKeys} from '../entities/shortcuts';
 
-interface KeyboardKeys {
-	keymode: string,
-	hide: string,
-	focus: string,
-	newHotkey: string,
-	delete: string,
-	transparent: string
-}
-export default class Shortcuts {
+export default class Shortcuts implements IShortcuts{
 	hotkeys: KeyboardKeys;
 	constructor() {
 		this.hotkeys = {
@@ -31,7 +24,7 @@ export default class Shortcuts {
 		});
 
 	}
-	private registerGlobal(win: BrowserWindow) {
+	public registerGlobal(win: BrowserWindow) {
 		const {focus, newHotkey, transparent} = this.hotkeys;
 
 		globalShortcut.register(newHotkey, () => {
@@ -47,7 +40,7 @@ export default class Shortcuts {
 		});
 	}
 
-	private unregisterGlobal(win: BrowserWindow) {
+	public unregisterGlobal(win: BrowserWindow) {
 		const {focus, newHotkey, transparent} = this.hotkeys;
 
 		globalShortcut.unregister(focus);
@@ -55,8 +48,10 @@ export default class Shortcuts {
 		globalShortcut.unregister(transparent);
 	}
 
-	public static localShortcuts() {
-		Mousetrap.bind('ctrl+t', () => { ipcRenderer.send('toggle-opacity')});
-		Mousetrap.bind('ctrl+x', () => { ipcRenderer.emit('newHotkey') });
+	public localShortcuts() {
+		const {transparent, newHotkey} = this.hotkeys;
+		function mt(key: string) { return key.replace('CmdOrCtrl', 'ctrl') }
+		Mousetrap.bind(mt(transparent), () => { ipcRenderer.send('toggle-opacity')});
+		Mousetrap.bind(mt(newHotkey), () => { ipcRenderer.emit('newHotkey') });
 	}
 }
